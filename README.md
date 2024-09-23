@@ -1,24 +1,22 @@
-# README
+# Book Store Rails API 
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+The user can book a book and when other users see the books this book which the user booking should be hidden from all books for a time after this time the book will show again in all books.
 
-Things you may want to cover:
+Sprints
+* **1st Sprint**
+  * Setup Project
+  * Choose the Database
+  * Authentication
+  * CRUD for Books
 
-* Ruby version
 
-* System dependencies
+* **2nd Sprint**
+    * CRUD for Books Category
+    * Implement Booking System
+    * User Roles
 
-* Configuration
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+* **3rd Sprint**
+  * Pagination
+  * Filtering
+  * Search
