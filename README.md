@@ -6,6 +6,7 @@ The user can book a book and when other users see the books this book which the 
 * **1st Sprint**
   * Setup Project
   * Choose the Database
+  * ERD - Mapping - UML
   * Authentication
   * CRUD for Books
 
