@@ -20,3 +20,14 @@ The user can book a book and when other users see the books this book which the 
   * Pagination
   * Filtering
   * Search
+
+
+# ERD
+![Book Store-ERD.png](images%20-%20readme/Book%20Store-ERD.png)
+
+# Mapping
+![Mapping - Book Store.png](images%20-%20readme/Mapping%20-%20Book%20Store.png)
+
+# UML
+![Book Store - UML.png](images%20-%20readme/Book%20Store%20-%20UML.png)
+
