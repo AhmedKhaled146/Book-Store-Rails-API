@@ -10,11 +10,13 @@ Rails.application.routes.draw do
        registrations: 'users/registrations'
  }
 
-  get "categories", to: "category#index"
-  post "categories", to: "category#create"
-  post "category/:id", to: "category#show"
-  put "category/:id", to: "category#update"
-  delete "category/:id", to: "category#destroy"
+  # put "category/:id", to: "category#update"
+  # delete "category/:id", to: "category#destroy"
+
+  resources :categories
+  # get "categories", to: "category#index"
+  # post "categories", to: "category#create"
+  # get "categories/:id", to: "category#show"
 
   get "up" => "rails/health#show", as: :rails_health_check
 
