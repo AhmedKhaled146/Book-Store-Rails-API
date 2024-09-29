@@ -10,7 +10,10 @@ Rails.application.routes.draw do
        registrations: 'users/registrations'
  }
 
-  resources :categories
+  resources :categories do
+    resources :books
+  end
+
   # get "categories", to: "category#index"
   # post "categories", to: "category#create"
   # get "categories/:id", to: "category#show"
