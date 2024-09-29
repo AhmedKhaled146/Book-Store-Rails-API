@@ -19,9 +19,25 @@ class CategoriesController < ApplicationController
   end
 
   def update
+    if @category.update(category_params)
+      render json: {
+        data: @category,
+        status: :ok,
+        message: "Category successfully updated"
+      }
+    else
+      render json: @category.errors, status: :unprocessable_entity
+    end
   end
 
   def destroy
+    if @category.destroy
+      render json: {
+        message: "Category successfully deleted",
+      }
+    else
+      render json: @category.errors, status: :unprocessable_entity
+    end
   end
 
   private
