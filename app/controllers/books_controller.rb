@@ -1,7 +1,17 @@
 class BooksController < ApplicationController
-  before_action :set_category
+  before_action :set_category, except: [:all_books]
   before_action :set_book, only: [:show, :update, :destroy]
-  rescue_from ActiveRecord::RecordNotFound, with: :not_found
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+
+  def all_books
+    @books = Book.all
+    render json: {
+      data: @books,
+      status: :ok,
+      message: "All books fetched successfully"
+    }
+  end
+
   def index
     @books = @category.books.all
     render json: {
@@ -18,6 +28,7 @@ class BooksController < ApplicationController
       message: "Book fetched successfully"
     }
   end
+
   def create
     @book = @category.books.build(book_params)
     if @book.save
@@ -27,11 +38,7 @@ class BooksController < ApplicationController
         message: "Book created successfully"
       }, status: :created
     else
-      render json: {
-        errors: @book.errors,
-        status: :unprocessable_entity,
-        message: "Errors occurred while creating book"
-      }, status: :unprocessable_entity
+      render_errors(@book)
     end
   end
 
@@ -43,11 +50,7 @@ class BooksController < ApplicationController
         message: "Book updated successfully"
       }
     else
-      render json: {
-        errors: @book.errors,
-        status: :unprocessable_entity,
-        message: "Errors occurred while updating book"
-      }, status: :unprocessable_entity
+      render_errors(@book)
     end
   end
 
@@ -59,11 +62,7 @@ class BooksController < ApplicationController
         message: "Book deleted successfully"
       }
     else
-      render json: {
-        errors: @book.errors,
-        status: :unprocessable_entity,
-        message: "Errors occurred while deleting book"
-      }, status: :unprocessable_entity
+      render_errors(@book)
     end
   end
 
@@ -72,24 +71,28 @@ class BooksController < ApplicationController
   def set_category
     @category = Category.find(params[:category_id])
   rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Category not found' }, status: :not_found
+    record_not_found('Category')
   end
 
   def set_book
     @book = @category.books.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Book not found' }, status: :not_found
+    record_not_found('Book')
   end
 
   def book_params
-    params.require(:books).permit(:title, :author, :description, :published_at)
+    params.require(:book).permit(:title, :author, :description, :published_at)
   end
 
-  def record_not_found
+  def render_errors(object)
     render json: {
-      errors: "Category not found",
-      status: :not_found,
-      message: "Could not find the requested category"
-    }, status: :not_found
+      errors: object.errors,
+      status: :unprocessable_entity,
+      message: "Errors occurred while processing the request"
+    }, status: :unprocessable_entity
+  end
+
+  def record_not_found(resource)
+    render json: { error: "#{resource} not found" }, status: :not_found
   end
 end

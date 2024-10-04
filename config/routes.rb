@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "bookings/create"
 
   devise_for :users, path: '', path_names: {
     sign_in: 'login',
@@ -10,9 +11,15 @@ Rails.application.routes.draw do
        registrations: 'users/registrations'
  }
 
+  get 'all_books', to: 'books#all_books'
+
   resources :categories do
     resources :books
   end
+
+  get "booking", to: "bookings#index"
+  post "booking/:book_id", to: "bookings#create"
+
 
   # get "categories", to: "category#index"
   # post "categories", to: "category#create"

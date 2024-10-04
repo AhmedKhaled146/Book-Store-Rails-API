@@ -24,7 +24,7 @@ The user can book a book and when other users see the books this book which the 
 
 
 # ERD
-![Book Store-ERD.png](images%20-%20readme/Book%20Store-ERD.png)
+![ERD - Book Store.png](images%20-%20readme/ERD%20-%20Book%20Store.png)
 
 # Mapping
 ![Mapping - Book Store.png](images%20-%20readme/Mapping%20-%20Book%20Store.png)
