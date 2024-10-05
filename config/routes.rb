@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "bookings/create"
 
   devise_for :users, path: '', path_names: {
     sign_in: 'login',
@@ -10,15 +11,18 @@ Rails.application.routes.draw do
        registrations: 'users/registrations'
  }
 
+  # Get All books
+  get 'all_books', to: 'books#all_books'
+
   resources :categories do
     resources :books
   end
 
-  # get "categories", to: "category#index"
-  # post "categories", to: "category#create"
-  # get "categories/:id", to: "category#show"
-  # put "categories/:id", to: "category#update"
-  # delete "categories/:id", to: "category#destroy"
+  # Admin Can see Booking Table
+  get "booking", to: "bookings#index"
+
+  # Book a Book
+  post "booking/:book_id", to: "bookings#create"
 
   get "up" => "rails/health#show", as: :rails_health_check
 

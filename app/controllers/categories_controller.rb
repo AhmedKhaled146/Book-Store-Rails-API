@@ -28,11 +28,7 @@ class CategoriesController < ApplicationController
         message: "Category created successfully"
       }, status: :created
     else
-      render json: {
-        errors: @category.errors,
-        status: :unprocessable_entity,
-        message: "Failed to create category"
-      }, status: :unprocessable_entity
+      render_errors(@category, "Failed to create category")
     end
   end
 
@@ -44,26 +40,19 @@ class CategoriesController < ApplicationController
         message: "Category successfully updated"
       }
     else
-      render json: {
-        errors: @category.errors,
-        status: :unprocessable_entity,
-        message: "Failed to update category"
-      }, status: :unprocessable_entity
+      render_errors(@category, "Failed to update category")
     end
   end
 
   def destroy
     if @category.destroy
       render json: {
+        data: nil,
         message: "Category successfully deleted",
         status: :ok
       }
     else
-      render json: {
-        errors: @category.errors,
-        status: :unprocessable_entity,
-        message: "Failed to delete category"
-      }, status: :unprocessable_entity
+      render_errors(@category, "Failed to delete category")
     end
   end
 
@@ -74,7 +63,15 @@ class CategoriesController < ApplicationController
   end
 
   def category_params
-    params.require(:categories).permit(:name, :description)
+    params.require(:category).permit(:name, :description)
+  end
+
+  def render_errors(object, message = "An error occurred")
+    render json: {
+      errors: object.errors,
+      status: :unprocessable_entity,
+      message: message
+    }, status: :unprocessable_entity
   end
 
   def record_not_found

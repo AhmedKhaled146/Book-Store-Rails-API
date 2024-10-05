@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  book: one
+  starting_date: 2024-09-29 19:07:48
+  ending_date: 2024-09-29 19:07:48
+
+two:
+  user: two
+  book: two
+  starting_date: 2024-09-29 19:07:48
+  ending_date: 2024-09-29 19:07:48
