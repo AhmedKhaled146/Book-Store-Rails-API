@@ -10,6 +10,10 @@ class BooksController < ApplicationController
       status: :ok,
       message: "All books fetched successfully"
     }
+
+    puts DateTime.now # EGY Time Zone
+    puts "--" * 50
+    puts DateTime.current # GMT Time Zone
   end
 
   def index
