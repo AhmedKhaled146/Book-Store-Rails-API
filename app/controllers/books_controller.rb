@@ -10,10 +10,6 @@ class BooksController < ApplicationController
       status: :ok,
       message: "All books fetched successfully"
     }
-
-    puts DateTime.now # EGY Time Zone
-    puts "--" * 50
-    puts DateTime.current # GMT Time Zone
   end
 
   def index
@@ -55,6 +51,13 @@ class BooksController < ApplicationController
       }
     else
       render_errors(@book)
+    end
+  end
+
+  # Method to update book status after the booking has expired
+  def update_book_status_expired
+    if DateTime.now > ending_date
+      @book.update(status: false)
     end
   end
 
