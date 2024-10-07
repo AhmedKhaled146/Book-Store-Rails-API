@@ -35,7 +35,7 @@ class BooksController < ApplicationController
   end
 
   def create
-    authorize @book
+    authorize Book
     @book = @category.books.build(book_params)
     if @book.save
       render json: {
