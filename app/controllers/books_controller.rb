@@ -1,9 +1,12 @@
 class BooksController < ApplicationController
+  before_action :authenticate_user!, except: [:all_books, :index, :show]
   before_action :set_category, except: [:all_books]
   before_action :set_book, only: [:show, :update, :destroy]
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   def all_books
+    authorize Book
     @books = Book.all
     render json: {
       data: @books,
@@ -13,6 +16,7 @@ class BooksController < ApplicationController
   end
 
   def index
+    authorize Book
     @books = @category.books.all
     render json: {
       data: @books,
@@ -22,6 +26,7 @@ class BooksController < ApplicationController
   end
 
   def show
+    authorize Book
     render json: {
       data: @book,
       status: :ok,
@@ -30,6 +35,7 @@ class BooksController < ApplicationController
   end
 
   def create
+    authorize @book
     @book = @category.books.build(book_params)
     if @book.save
       render json: {
@@ -43,6 +49,7 @@ class BooksController < ApplicationController
   end
 
   def update
+    authorize @book
     if @book.update(book_params)
       render json: {
         data: @book,
@@ -62,6 +69,7 @@ class BooksController < ApplicationController
   end
 
   def destroy
+    authorize @book
     if @book.destroy
       render json: {
         data: nil,
@@ -101,5 +109,11 @@ class BooksController < ApplicationController
 
   def record_not_found(resource)
     render json: { error: "#{resource} not found" }, status: :not_found
+  end
+
+  def user_not_authorized
+    render json: {
+      status: { code: 403, message: "You are not authorized to perform this action." }
+    }, status: :forbidden
   end
 end
