@@ -7,7 +7,7 @@ class BooksController < ApplicationController
 
   def all_books
     authorize Book
-    @books = Book.filter_by_status(params[:status]).filter_by_category(params[:category_id]).page(params[:page]).per(3)
+    @books = Book.search(params[:search]).filter_by_status(params[:status]).filter_by_category(params[:category_id]).page(params[:page]).per(3)
     render json: {
       data: @books,
       status: :ok,
