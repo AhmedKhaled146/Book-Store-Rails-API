@@ -14,4 +14,8 @@ class Book < ApplicationRecord
     where(status: ActiveModel::Type::Boolean.new.cast(status)) if status.present?
   }
 
+  scope :filter_by_category, ->(category_id) {
+    where(category_id: category_id) if category_id.present?
+  }
+
 end
