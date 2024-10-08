@@ -7,21 +7,23 @@ class BooksController < ApplicationController
 
   def all_books
     authorize Book
-    @books = Book.all
+    @books = Book.filter_by_status(params[:status]).page(params[:page]).per(3)
     render json: {
       data: @books,
       status: :ok,
-      message: "All books fetched successfully"
+      message: "All books fetched successfully",
+      meta: pagination_meta(@books)
     }
   end
 
   def index
     authorize Book
-    @books = @category.books.all
+    @books_category = @category.books.page(params[:page]).per(2)
     render json: {
-      data: @books,
+      data: @books_category,
       status: :ok,
-      message: "Books fetched successfully"
+      message: "Books fetched successfully",
+      meta: pagination_meta(@books_category)
     }
   end
 
@@ -82,6 +84,16 @@ class BooksController < ApplicationController
   end
 
   private
+
+  def pagination_meta(paginated_records)
+    {
+      current_page: paginated_records.current_page,
+      next_page: paginated_records.next_page,
+      prev_page: paginated_records.prev_page,
+      total_pages: paginated_records.total_pages,
+      total_count: paginated_records.total_count
+    }
+  end
 
   def set_category
     @category = Category.find(params[:category_id])

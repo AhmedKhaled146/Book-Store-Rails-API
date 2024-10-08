@@ -7,11 +7,12 @@ class CategoriesController < ApplicationController
 
   def index
     authorize Category
-    @categories = Category.all
+    @categories = Category.page(params[:page]).per(1)
     render json: {
       data: @categories,
       status: :ok,
-      message: "Categories fetched successfully"
+      message: "Categories fetched successfully",
+      meta: pagination_meta(@categories)
     }
   end
 
@@ -65,6 +66,16 @@ class CategoriesController < ApplicationController
   end
 
   private
+
+  def pagination_meta(categories)
+    {
+      current_page: categories.current_page,
+      next_page: categories.next_page,
+      prev_page: categories.prev_page,
+      total_pages: categories.total_pages,
+      total_count: categories.total_count
+    }
+  end
 
   def set_category
     @category = Category.find(params[:id])
