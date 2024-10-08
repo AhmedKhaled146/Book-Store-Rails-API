@@ -1,17 +1,23 @@
 class CategoriesController < ApplicationController
+  before_action :authenticate_user!, except: [:index, :show]
   before_action :set_category, only: [:show, :update, :destroy]
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
 
   def index
-    @categories = Category.all
+    authorize Category
+    @categories = Category.page(params[:page]).per(1)
     render json: {
       data: @categories,
       status: :ok,
-      message: "Categories fetched successfully"
+      message: "Categories fetched successfully",
+      meta: pagination_meta(@categories)
     }
   end
 
   def show
+    authorize Category
     render json: {
       data: @category,
       status: :ok,
@@ -20,6 +26,7 @@ class CategoriesController < ApplicationController
   end
 
   def create
+    authorize Category
     @category = Category.new(category_params)
     if @category.save
       render json: {
@@ -33,6 +40,7 @@ class CategoriesController < ApplicationController
   end
 
   def update
+    authorize @category
     if @category.update(category_params)
       render json: {
         data: @category,
@@ -45,6 +53,7 @@ class CategoriesController < ApplicationController
   end
 
   def destroy
+    authorize @category
     if @category.destroy
       render json: {
         data: nil,
@@ -57,6 +66,16 @@ class CategoriesController < ApplicationController
   end
 
   private
+
+  def pagination_meta(categories)
+    {
+      current_page: categories.current_page,
+      next_page: categories.next_page,
+      prev_page: categories.prev_page,
+      total_pages: categories.total_pages,
+      total_count: categories.total_count
+    }
+  end
 
   def set_category
     @category = Category.find(params[:id])
@@ -80,5 +99,11 @@ class CategoriesController < ApplicationController
       status: :not_found,
       message: "Could not find the requested category"
     }, status: :not_found
+  end
+
+  def user_not_authorized
+    render json: {
+      status: { code: 403, message: "You are not authorized to perform this action." }
+    }, status: :forbidden
   end
 end

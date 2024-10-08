@@ -10,4 +10,8 @@ class Book < ApplicationRecord
     bookings.where("starting_date < ? AND ending_date > ?", end_date, start_date).none?
   end
 
+  scope :filter_by_status, ->(status) {
+    where(status: ActiveModel::Type::Boolean.new.cast(status)) if status.present?
+  }
+
 end
