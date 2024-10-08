@@ -18,4 +18,9 @@ class Book < ApplicationRecord
     where(category_id: category_id) if category_id.present?
   }
 
+  scope :search, ->(term) {
+      where("title ILIKE :term OR author ILIKE :term", term: "%#{term}%") if term.present?
+  }
+
+
 end
