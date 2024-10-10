@@ -8,6 +8,7 @@ class Booking < ApplicationRecord
 
   # Ensure the dates don't overlap with existing bookings for the same book
   def no_overlapping_bookings
+    # TODO: Make a "scope" in Booking model and use it. book.bookings.available(start_date, end_date)
     overlapping_bookings = Booking.where(book_id: book_id).where("starting_date < ? AND ending_date > ?", ending_date, starting_date)
     if overlapping_bookings.exists?
       errors.add(:base, 'This book is already booked for the selected dates.')
