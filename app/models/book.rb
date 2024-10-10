@@ -1,13 +1,12 @@
 class Book < ApplicationRecord
   belongs_to :category
-  has_many :bookings
+  has_many :bookings, dependent: :destroy
 
-  validates :title, :author, presence: true
-  validates :title, presence: true, uniqueness: true, length: { minimum: 3 }
   validates :author, presence: true
+  validates :title, presence: true, uniqueness: true, length: { minimum: 3 }
 
   def available?(start_date, end_date)
-    bookings.where("starting_date < ? AND ending_date > ?", end_date, start_date).none?
+    bookings.available(start_date, end_date).none?
   end
 
   scope :filter_by_status, ->(status) {
@@ -18,9 +17,10 @@ class Book < ApplicationRecord
     where(category_id: category_id) if category_id.present?
   }
 
-  scope :search, ->(term) {
-      where("title ILIKE :term OR author ILIKE :term", term: "%#{term}%") if term.present?
+  scope :filter_by_keyword, ->(term) {
+    where("title ILIKE :term OR author ILIKE :term", term: "%#{term}%") if term.present?
   }
+
 
 
 end

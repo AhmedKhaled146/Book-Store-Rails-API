@@ -12,17 +12,17 @@ Rails.application.routes.draw do
  }
 
   # Get All books
-  get 'all_books', to: 'books#all_books'
+  get 'books', to: 'books#books'
 
   resources :categories do
     resources :books
   end
 
   # Admin Can see Booking Table
-  get "booking", to: "bookings#index"
+  get "bookings", to: "bookings#index"
 
   # Book a Book
-  post "booking/:book_id", to: "bookings#create"
+  post "bookings/:book_id", to: "bookings#create"
 
   get "up" => "rails/health#show", as: :rails_health_check
 
