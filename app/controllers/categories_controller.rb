@@ -7,7 +7,7 @@ class CategoriesController < ApplicationController
 
   def index
     authorize Category
-    @categories = Category.page(params[:page]).per(1)
+    @categories = Category.page(params[:page]).per(1) # TODO: cannot put static value here, instead, accept param called "per_page" and use it like this: .per(params[:per_page])
     render json: {
       data: @categories,
       status: :ok,
@@ -85,6 +85,7 @@ class CategoriesController < ApplicationController
     params.require(:category).permit(:name, :description)
   end
 
+  # TODO: render_errors, record_not_found, user_not_authorized are duplicate in BooksController and CategoriesController. So better to move them to the ApplicationController
   def render_errors(object, message = "An error occurred")
     render json: {
       errors: object.errors,
