@@ -1,15 +1,19 @@
 class BookingsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_book, only: [:create]
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   # Admin can See the booking
   def index
+    authorize Booking
     @bookings = Booking.page(params[:page]).per(params[:per_page].presence || 10)
     render json: @bookings
   end
 
   # Regular User Can Book a Book
   def create
+    authorize Booking
+    
     params[:booking][:starting_date] ||= DateTime.now
     @booking = Booking.new(booking_params.merge({user: current_user, book: @book}))
 
@@ -30,6 +34,7 @@ class BookingsController < ApplicationController
   end
 
 
+
   private
 
   def set_book
@@ -39,4 +44,5 @@ class BookingsController < ApplicationController
   def booking_params
     params.require(:booking).permit(:starting_date, :ending_date)
   end
+
 end
