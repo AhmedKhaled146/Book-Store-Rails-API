@@ -7,7 +7,7 @@ class CategoriesController < ApplicationController
 
   def index
     authorize Category
-    @categories = Category.page(params[:page]).per(1) # TODO: cannot put static value here, instead, accept param called "per_page" and use it like this: .per(params[:per_page])
+    @categories = Category.page(params[:page]).per(params[:per_page].presence || 10)
     render json: {
       data: @categories,
       status: :ok,
@@ -67,16 +67,6 @@ class CategoriesController < ApplicationController
 
   private
 
-  def pagination_meta(categories)
-    {
-      current_page: categories.current_page,
-      next_page: categories.next_page,
-      prev_page: categories.prev_page,
-      total_pages: categories.total_pages,
-      total_count: categories.total_count
-    }
-  end
-
   def set_category
     @category = Category.find(params[:id])
   end
@@ -85,26 +75,4 @@ class CategoriesController < ApplicationController
     params.require(:category).permit(:name, :description)
   end
 
-  # TODO: render_errors, record_not_found, user_not_authorized are duplicate in BooksController and CategoriesController. So better to move them to the ApplicationController
-  def render_errors(object, message = "An error occurred")
-    render json: {
-      errors: object.errors,
-      status: :unprocessable_entity,
-      message: message
-    }, status: :unprocessable_entity
-  end
-
-  def record_not_found
-    render json: {
-      errors: "Category not found",
-      status: :not_found,
-      message: "Could not find the requested category"
-    }, status: :not_found
-  end
-
-  def user_not_authorized
-    render json: {
-      status: { code: 403, message: "You are not authorized to perform this action." }
-    }, status: :forbidden
-  end
 end

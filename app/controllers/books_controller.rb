@@ -1,13 +1,13 @@
 class BooksController < ApplicationController
-  before_action :authenticate_user!, except: [:all_books, :index, :show]
-  before_action :set_category, except: [:all_books]
+  before_action :authenticate_user!, except: [:books, :index, :show]
+  before_action :set_category, except: [:books]
   before_action :set_book, only: [:show, :update, :destroy]
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
-  def all_books
+  def books
     authorize Book
-    @books = Book.search(params[:search]).filter_by_status(params[:status]).filter_by_category(params[:category_id]).page(params[:page]).per(3)
+    @books = Book.filter_by_keyword(params[:search]).filter_by_status(params[:status]).filter_by_category(params[:category_id]).page(params[:page]).per(params[:per_page].presence || 10)
     render json: {
       data: @books,
       status: :ok,
@@ -18,7 +18,7 @@ class BooksController < ApplicationController
 
   def index
     authorize Book
-    @books_category = @category.books.page(params[:page]).per(2)
+    @books_category = @category.books.page(params[:page]).per(params[:per_page].presence || 10)
     render json: {
       data: @books_category,
       status: :ok,
@@ -63,13 +63,11 @@ class BooksController < ApplicationController
     end
   end
 
-  # Method to update book status after the booking has expired
   def update_book_status_expired
     if DateTime.now > ending_date
       @book.update(status: false)
     end
   end
-
   def destroy
     authorize @book
     if @book.destroy
@@ -85,16 +83,6 @@ class BooksController < ApplicationController
 
   private
 
-  def pagination_meta(paginated_records)
-    {
-      current_page: paginated_records.current_page,
-      next_page: paginated_records.next_page,
-      prev_page: paginated_records.prev_page,
-      total_pages: paginated_records.total_pages,
-      total_count: paginated_records.total_count
-    }
-  end
-
   def set_category
     @category = Category.find(params[:category_id])
   rescue ActiveRecord::RecordNotFound
@@ -109,23 +97,5 @@ class BooksController < ApplicationController
 
   def book_params
     params.require(:book).permit(:title, :author, :description, :published_at)
-  end
-
-  def render_errors(object)
-    render json: {
-      errors: object.errors,
-      status: :unprocessable_entity,
-      message: "Errors occurred while processing the request"
-    }, status: :unprocessable_entity
-  end
-
-  def record_not_found(resource)
-    render json: { error: "#{resource} not found" }, status: :not_found
-  end
-
-  def user_not_authorized
-    render json: {
-      status: { code: 403, message: "You are not authorized to perform this action." }
-    }, status: :forbidden
   end
 end

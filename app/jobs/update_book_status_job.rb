@@ -1,11 +1,19 @@
 class UpdateBookStatusJob < ApplicationJob
   queue_as :default
 
-  def perform(booking)
-    # TODO: we usually don't send object as param to the jobs, instead, we send id of the object only and fetch it from inside the job, this way we keep the redis server light. So accept booking_id and fetch booking
-    # TODO: Refactor: return if booking.end_date < DateTime.now
-    if DateTime.now > booking.ending_date
+  def perform(booking_id)
+    Rails.logger.info "Running UpdateBookStatusJob for booking_id: #{booking_id}"
+
+    booking = Booking.find_by(id: booking_id)
+    return if booking.nil?
+
+    if DateTime.now >= booking.ending_date
+      Rails.logger.info "Updating book status for booking_id: #{booking_id}"
       booking.book.update(status: false)
+    else
+      Rails.logger.info "Booking for booking_id: #{booking_id} is still active."
     end
   end
+
+
 end
