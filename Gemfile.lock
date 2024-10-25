@@ -173,7 +173,7 @@ GEM
     parser (3.3.5.0)
       ast (~> 2.4.1)
       racc
-    pg (1.5.8)
+    pg (1.5.9)
     psych (5.1.2)
       stringio
     puma (6.4.3)
@@ -296,7 +296,7 @@ DEPENDENCIES
   devise-jwt
   jsonapi-serializer
   kaminari
-  pg (~> 1.1)
+  pg (~> 1.5)
   puma (>= 5.0)
   pundit
   rack-cors
